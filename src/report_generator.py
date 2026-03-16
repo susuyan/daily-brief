@@ -604,6 +604,7 @@ class ReportGenerator:
             </div>
         </div>
         {% endif %}
+        {% endif %}
 
         <!-- AI 洞察 -->
         {% if ai_insights and ai_insights.enabled %}
