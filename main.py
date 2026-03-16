@@ -6,6 +6,17 @@ import json
 import os
 import sys
 from datetime import datetime
+
+# 加载本地环境变量（如果存在）
+from pathlib import Path
+try:
+    from dotenv import load_dotenv
+    env_local = Path(__file__).parent / ".env.local"
+    if env_local.exists():
+        load_dotenv(env_local)
+        print("✅ 已加载本地环境变量 .env.local")
+except ImportError:
+    pass
 from src.weather_fetcher import WeatherFetcher
 from src.finance_fetcher import FinanceFetcher
 from src.enhanced_fund_fetcher import EnhancedFundFetcher
