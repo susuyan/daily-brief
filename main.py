@@ -52,6 +52,10 @@ def main():
         report_data["weather"] = weather_fetcher.get_all_cities_weather(cities)
         success_count = sum(1 for w in report_data["weather"] if w.get("success"))
         print(f"✅ 天气数据获取完成 ({success_count}/{len(cities)})")
+        # 打印详细错误信息
+        for w in report_data["weather"]:
+            if not w.get("success"):
+                print(f"   ⚠️ {w['name']}: {w.get('error', '未知错误')}")
     except Exception as e:
         print(f"❌ 天气数据获取失败: {e}")
 
