@@ -37,7 +37,10 @@ jobs:
     - name: Generate daily report
       env:
         QWEATHER_API_KEY: ${{ secrets.QWEATHER_API_KEY }}
+        QWEATHER_BASE_URL: ${{ secrets.QWEATHER_BASE_URL }}
         NEWSAPI_KEY: ${{ secrets.NEWSAPI_KEY }}
+        ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        ANTHROPIC_BASE_URL: ${{ secrets.ANTHROPIC_BASE_URL }}
       run: |
         python main.py
 
