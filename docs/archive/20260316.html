@@ -260,6 +260,60 @@
             line-height: 1.4;
         }
 
+        /* 板块网格 */
+        .sector-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+        }
+
+        .sector-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            border-left: 3px solid #ddd;
+        }
+
+        .sector-item.up {
+            background: #fff5f5;
+            border-left-color: #e74c3c;
+        }
+
+        .sector-item.down {
+            background: #f0fff4;
+            border-left-color: #27ae60;
+        }
+
+        .sector-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .sector-change {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .sector-item.up .sector-change {
+            color: #e74c3c;
+        }
+
+        .sector-item.down .sector-change {
+            color: #27ae60;
+        }
+
+        .sector-leader {
+            font-size: 11px;
+            color: #999;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         /* 响应式 */
         @media (max-width: 480px) {
             .header h1 {
@@ -307,9 +361,9 @@
                         <span class="weather-icon">🌫️</span>
                         <span class="weather-temp">10°</span>
                     </div>
-                    <div class="weather-desc">雾 | 9°~10°</div>
+                    <div class="weather-desc">雾 | 9°~11°</div>
                     <div class="weather-details">
-                        <div class="weather-detail">💧 湿度 99%</div>
+                        <div class="weather-detail">💧 湿度 98%</div>
                         <div class="weather-detail">⚪ 空气 暂无数据</div>
                         <div class="weather-detail">☀️ 紫外线 最弱</div>
                         <div class="weather-detail">🌬️ 东北风2级</div>
@@ -324,12 +378,12 @@
                         <span class="weather-icon">☀️</span>
                         <span class="weather-temp">19°</span>
                     </div>
-                    <div class="weather-desc">晴 | 18°~27°</div>
+                    <div class="weather-desc">晴 | 19°~27°</div>
                     <div class="weather-details">
-                        <div class="weather-detail">💧 湿度 78%</div>
+                        <div class="weather-detail">💧 湿度 69%</div>
                         <div class="weather-detail">⚪ 空气 暂无数据</div>
                         <div class="weather-detail">☀️ 紫外线 强</div>
-                        <div class="weather-detail">🌬️ 南风2级</div>
+                        <div class="weather-detail">🌬️ 东南风1级</div>
                     </div>
                 </div>
                 
@@ -341,9 +395,9 @@
                         <span class="weather-icon">🌫️</span>
                         <span class="weather-temp">9°</span>
                     </div>
-                    <div class="weather-desc">雾 | 8°~12°</div>
+                    <div class="weather-desc">雾 | 8°~10°</div>
                     <div class="weather-details">
-                        <div class="weather-detail">💧 湿度 92%</div>
+                        <div class="weather-detail">💧 湿度 94%</div>
                         <div class="weather-detail">⚪ 空气 暂无数据</div>
                         <div class="weather-detail">☀️ 紫外线 最弱</div>
                         <div class="weather-detail">🌬️ 东风2级</div>
@@ -374,12 +428,12 @@
                     
                     <tr>
                         <td>道琼斯</td>
-                        <td class="number" style="text-align:right">47058.86</td>
+                        <td class="number" style="text-align:right">46959.49</td>
                         <td class="number up" style="text-align:right">
-                            +500.39
+                            +401.02
                         </td>
                         <td class="number up" style="text-align:right">
-                            +1.07%
+                            +0.86%
                         </td>
                     </tr>
                     
@@ -387,12 +441,12 @@
                     
                     <tr>
                         <td>纳斯达克</td>
-                        <td class="number" style="text-align:right">22428.63</td>
+                        <td class="number" style="text-align:right">22381.12</td>
                         <td class="number up" style="text-align:right">
-                            +323.27
+                            +275.76
                         </td>
                         <td class="number up" style="text-align:right">
-                            +1.46%
+                            +1.25%
                         </td>
                     </tr>
                     
@@ -400,12 +454,12 @@
                     
                     <tr>
                         <td>标普500</td>
-                        <td class="number" style="text-align:right">6712.91</td>
+                        <td class="number" style="text-align:right">6698.33</td>
                         <td class="number up" style="text-align:right">
-                            +80.72
+                            +66.14
                         </td>
                         <td class="number up" style="text-align:right">
-                            +1.22%
+                            +1.00%
                         </td>
                     </tr>
                     
@@ -451,59 +505,35 @@
             </table>
         </div>
 
-        <!-- 基金 -->
+        <!-- 关注基金 -->
+        
         <div class="card">
             <div class="card-title">
                 <span class="icon">📈</span>
-                <span>热门基金</span>
+                <span>我的关注</span>
             </div>
             <table class="data-table">
                 <thead>
                     <tr>
                         <th>基金名称</th>
-                        <th style="text-align:right">净值</th>
-                        <th style="text-align:right">日涨跌</th>
+                        <th style="text-align:right">价格</th>
+                        <th style="text-align:right">涨跌</th>
                     </tr>
                 </thead>
                 <tbody>
-                    
-                    
-                    
-                    
-                    
-                    
                     
                 </tbody>
             </table>
         </div>
 
-        <!-- AI 洞察 -->
+        <!-- 热门ETF涨幅榜 -->
         
-        <div class="card ai-insight">
-            <div class="card-title">
-                <span class="icon">🤖</span>
-                <span>AI 洞察</span>
-            </div>
-            
-            <div class="insight-highlight">💡 美股三大指数齐跌超1%，科技股领跌，市场避险情绪升温。</div>
-            
-            
-            <div class="insight-section">
-                <span class="insight-label">📈 市场</span>
-                <span class="insight-text">美股三大指数全线收涨，道指、纳指、标普500分别上涨1.07%、1.46%及1.22%，科技股领涨带动纳指表现最佳。港股同步走强，恒生指数涨1.45%，显示全球风险偏好回暖。</span>
-            </div>
-            
-            
-            <div class="insight-section">
-                <span class="insight-label">🌤️ 出行</span>
-                <span class="insight-text">**武汉**：大雾潮湿，能见度低，驾车慢行；穿厚外套，备口罩防潮气。
 
-**东莞**：晴朗温暖，紫外线强，注意防晒；薄长袖即可，带遮阳帽。
+        <!-- 行业板块表现 -->
+        
+        
 
-**光山**：浓雾湿冷，出行注意安全；穿保暖衣物，戴口罩防湿气。</span>
-            </div>
-            
-        </div>
+        <!-- AI 洞察 -->
         
 
         <!-- 热点资讯 -->
@@ -515,33 +545,78 @@
             <ul class="news-list">
                 
                 <li class="news-item">
+                    <span class="news-time">03-15 21:22</span>
+                    <div class="news-content">
+                        <div class="news-title">Canada's bill C-22 mandates mass metadata surveillance</div>
+                        
+                        <div class="news-ai-summary">🤖 加拿大C-22法案强制实施大规模元数据监控，引发热议。</div>
+                        
+                        <div class="news-source">HN 🔥 814 | 💬 240</div>
+                    </div>
+                </li>
+                
+                <li class="news-item">
+                    <span class="news-time">03-15 19:25</span>
+                    <div class="news-content">
+                        <div class="news-title">The 49MB web page</div>
+                        
+                        <div class="news-ai-summary">🤖 某网页体积达49MB，引发网页性能优化讨论。</div>
+                        
+                        <div class="news-source">HN 🔥 647 | 💬 290</div>
+                    </div>
+                </li>
+                
+                <li class="news-item">
+                    <span class="news-time">03-15 19:12</span>
+                    <div class="news-content">
+                        <div class="news-title">Chrome DevTools MCP (2025)</div>
+                        
+                        <div class="news-ai-summary">🤖 Chrome DevTools MCP工具2025年发布，开发者关注度高。</div>
+                        
+                        <div class="news-source">HN 🔥 522 | 💬 209</div>
+                    </div>
+                </li>
+                
+                <li class="news-item">
+                    <span class="news-time">03-15 16:01</span>
+                    <div class="news-content">
+                        <div class="news-title">LLM Architecture Gallery</div>
+                        
+                        <div class="news-source">HN 🔥 459 | 💬 34</div>
+                    </div>
+                </li>
+                
+                <li class="news-item">
+                    <span class="news-time">03-15 17:25</span>
+                    <div class="news-content">
+                        <div class="news-title">Stop Sloppypasta</div>
+                        
+                        <div class="news-source">HN 🔥 444 | 💬 181</div>
+                    </div>
+                </li>
+                
+                <li class="news-item">
+                    <span class="news-time">03-16 15:50</span>
+                    <div class="news-content">
+                        <div class="news-title">中美在法国巴黎举行经贸磋商</div>
+                        
+                        <div class="news-source">华尔街见闻</div>
+                    </div>
+                </li>
+                
+                <li class="news-item">
+                    <span class="news-time">03-16 15:28</span>
+                    <div class="news-content">
+                        <div class="news-title">蚂蚁加速切入券商业务，要约收购耀才证券获批准，交易预计3月30日完成</div>
+                        
+                        <div class="news-source">华尔街见闻</div>
+                    </div>
+                </li>
+                
+                <li class="news-item">
                     <span class="news-time">03-16 15:18</span>
                     <div class="news-content">
                         <div class="news-title">乌克兰教训伊朗再度上演？高盛：谨慎抄底，停火消息或成最佳出货时机</div>
-                        
-                        <div class="news-ai-summary">🤖 高盛警示：地缘停火消息或成抄底资金出货窗口，需谨慎。</div>
-                        
-                        <div class="news-source">华尔街见闻</div>
-                    </div>
-                </li>
-                
-                <li class="news-item">
-                    <span class="news-time">03-16 14:47</span>
-                    <div class="news-content">
-                        <div class="news-title">阳光保险2025财报透视：多项核心指标增长，寿险新业务价值高增48%</div>
-                        
-                        <div class="news-ai-summary">🤖 阳光保险2025年寿险新业务价值同比增长48%，核心指标向好。</div>
-                        
-                        <div class="news-source">华尔街见闻</div>
-                    </div>
-                </li>
-                
-                <li class="news-item">
-                    <span class="news-time">03-16 14:46</span>
-                    <div class="news-content">
-                        <div class="news-title">1-2月经济喜大于忧，成色几何？</div>
-                        
-                        <div class="news-ai-summary">🤖 1-2月经济数据整体偏积极，具体成色待观察。</div>
                         
                         <div class="news-source">华尔街见闻</div>
                     </div>
@@ -569,7 +644,7 @@
         </div>
 
         <div class="footer-note">
-            <p>数据更新时间：2026-03-16 15:38:28</p>
+            <p>数据更新时间：2026-03-16 16:11:09</p>
             <p style="margin-top:5px">仅供参考，不构成投资建议</p>
         </div>
     </div>
