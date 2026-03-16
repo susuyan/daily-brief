@@ -9,6 +9,7 @@ from datetime import datetime
 from src.weather_fetcher import WeatherFetcher
 from src.finance_fetcher import FinanceFetcher
 from src.news_fetcher import NewsFetcher
+from src.hackernews_fetcher import HackerNewsFetcher
 from src.ai_analyzer import AIAnalyzer
 from src.report_generator import ReportGenerator
 
@@ -75,13 +76,41 @@ def main():
 
     # 3. 获取新闻资讯
     print("\n📰 正在获取热点资讯...")
+    all_news = []
+    news_config = config.get("news", {})
+
+    # 3.1 获取 Hacker News（如果启用）
+    if news_config.get("hackernews", {}).get("enabled", True):
+        try:
+            hn_fetcher = HackerNewsFetcher()
+            hn_limit = news_config.get("hackernews", {}).get("limit", 5)
+            hn_news = hn_fetcher.get_front_page(limit=hn_limit)
+            all_news.extend(hn_news)
+            print(f"✅ Hacker News 获取完成 ({len(hn_news)}条)")
+        except Exception as e:
+            print(f"⚠️ Hacker News 获取失败: {e}")
+
+    # 3.2 获取其他新闻源
     try:
         news_fetcher = NewsFetcher()
-        max_news = config.get("news", {}).get("max_items", 5)
-        report_data["news"] = news_fetcher.get_all_news(max_items=max_news)
-        print(f"✅ 资讯获取完成 ({len(report_data['news'])}条)")
+        max_news = news_config.get("max_items", 5)
+        other_news = news_fetcher.get_all_news(max_items=max_news)
+        all_news.extend(other_news)
+        print(f"✅ 其他资讯获取完成 ({len(other_news)}条)")
     except Exception as e:
-        print(f"❌ 资讯获取失败: {e}")
+        print(f"⚠️ 其他资讯获取失败: {e}")
+
+    # 去重并限制数量（按投票数排序）
+    seen_urls = set()
+    unique_news = []
+    for news in sorted(all_news, key=lambda x: x.get("points", 0), reverse=True):
+        url = news.get("url", "")
+        if url and url not in seen_urls:
+            seen_urls.add(url)
+            unique_news.append(news)
+
+    report_data["news"] = unique_news[:news_config.get("max_total", 10)]
+    print(f"✅ 资讯总计: {len(report_data['news'])}条")
 
     # 4. AI 分析（可选）
     ai_config = config.get("ai", {})

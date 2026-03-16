@@ -23,7 +23,12 @@
   },
   "news": {
     "sources": ["财联社", "华尔街见闻", "Bloomberg"],
-    "max_items": 5
+    "max_items": 5,
+    "max_total": 10,
+    "hackernews": {
+      "enabled": true,
+      "limit": 5
+    }
   },
   "ai": {
     "enabled": true,
