@@ -8,6 +8,7 @@ import sys
 from datetime import datetime
 from src.weather_fetcher import WeatherFetcher
 from src.finance_fetcher import FinanceFetcher
+from src.enhanced_fund_fetcher import EnhancedFundFetcher
 from src.news_fetcher import NewsFetcher
 from src.hackernews_fetcher import HackerNewsFetcher
 from src.ai_analyzer import AIAnalyzer
@@ -68,11 +69,22 @@ def main():
         indices = config.get("finance", {}).get("indices", [])
         report_data["indices"] = finance_fetcher.get_all_indices(indices)
 
-        funds = config.get("finance", {}).get("funds", [])
-        report_data["funds"] = finance_fetcher.get_all_funds(funds)
+        # 使用增强版基金获取器
+        fund_config = config.get("finance", {}).get("funds", {})
+        if fund_config.get("enabled", True):
+            fund_fetcher = EnhancedFundFetcher()
+            report_data["funds"] = fund_fetcher.get_all_fund_data(config)
+            fund_count = len(report_data["funds"].get("watchlist", []))
+            hot_count = len(report_data["funds"].get("hot_etfs", []))
+            sector_count = len(report_data["funds"].get("sectors", {}))
+            print(f"✅ 基金数据获取完成 (关注{fund_count}只 + 热门{hot_count}只 + {sector_count}个板块)")
+        else:
+            report_data["funds"] = {"enabled": False}
+
         print("✅ 金融数据获取完成")
     except Exception as e:
         print(f"❌ 金融数据获取失败: {e}")
+        report_data["funds"] = {"enabled": False, "error": str(e)}
 
     # 3. 获取新闻资讯
     print("\n📰 正在获取热点资讯...")

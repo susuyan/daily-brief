@@ -329,6 +329,60 @@ class ReportGenerator:
             line-height: 1.4;
         }
 
+        /* 板块网格 */
+        .sector-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+        }
+
+        .sector-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            border-left: 3px solid #ddd;
+        }
+
+        .sector-item.up {
+            background: #fff5f5;
+            border-left-color: #e74c3c;
+        }
+
+        .sector-item.down {
+            background: #f0fff4;
+            border-left-color: #27ae60;
+        }
+
+        .sector-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .sector-change {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .sector-item.up .sector-change {
+            color: #e74c3c;
+        }
+
+        .sector-item.down .sector-change {
+            color: #27ae60;
+        }
+
+        .sector-leader {
+            font-size: 11px;
+            color: #999;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         /* 响应式 */
         @media (max-width: 480px) {
             .header h1 {
@@ -471,28 +525,29 @@ class ReportGenerator:
             </table>
         </div>
 
-        <!-- 基金 -->
+        <!-- 关注基金 -->
+        {% if funds.enabled != False %}
         <div class="card">
             <div class="card-title">
                 <span class="icon">📈</span>
-                <span>热门基金</span>
+                <span>我的关注</span>
             </div>
             <table class="data-table">
                 <thead>
                     <tr>
                         <th>基金名称</th>
-                        <th style="text-align:right">净值</th>
-                        <th style="text-align:right">日涨跌</th>
+                        <th style="text-align:right">价格</th>
+                        <th style="text-align:right">涨跌</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for fund in funds %}
+                    {% for fund in funds.watchlist %}
                     {% if fund.success %}
                     <tr>
                         <td>{{ fund.name }}<br><small style="color:#999">{{ fund.code }}</small></td>
-                        <td class="number" style="text-align:right">{{ fund.nav }}</td>
-                        <td class="number {{ 'up' if fund.daily_change and fund.daily_change.startswith('+') else 'down' if fund.daily_change and fund.daily_change.startswith('-') else 'neutral' }}" style="text-align:right">
-                            {{ fund.daily_change }}
+                        <td class="number" style="text-align:right">{{ fund.price }}</td>
+                        <td class="number {{ 'up' if fund.change_pct > 0 else 'down' if fund.change_pct < 0 else 'neutral' }}" style="text-align:right">
+                            {{ "+%.2f%%"|format(fund.change_pct) if fund.change_pct > 0 else "%.2f%%"|format(fund.change_pct) }}
                         </td>
                     </tr>
                     {% endif %}
@@ -500,6 +555,55 @@ class ReportGenerator:
                 </tbody>
             </table>
         </div>
+
+        <!-- 热门ETF涨幅榜 -->
+        {% if funds.hot_etfs %}
+        <div class="card">
+            <div class="card-title">
+                <span class="icon">🔥</span>
+                <span>今日热门ETF</span>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>基金</th>
+                        <th style="text-align:right">涨幅</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for fund in funds.hot_etfs %}
+                    {% if fund.success %}
+                    <tr>
+                        <td>{{ fund.name }}<br><small style="color:#999">{{ fund.code }}</small></td>
+                        <td class="number {{ 'up' if fund.daily_change > 0 else 'down' }}" style="text-align:right">
+                            {{ "+%.2f%%"|format(fund.daily_change) if fund.daily_change > 0 else "%.2f%%"|format(fund.daily_change) }}
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        <!-- 行业板块表现 -->
+        {% if funds.sectors %}
+        <div class="card">
+            <div class="card-title">
+                <span class="icon">🏗️</span>
+                <span>板块表现</span>
+            </div>
+            <div class="sector-grid">
+                {% for sector_name, sector_data in funds.sectors.items() %}
+                <div class="sector-item {{ 'up' if sector_data.avg_change > 0 else 'down' }}">
+                    <div class="sector-name">{{ sector_name }}</div>
+                    <div class="sector-change">{{ "+%.2f%%"|format(sector_data.avg_change) if sector_data.avg_change > 0 else "%.2f%%"|format(sector_data.avg_change) }}</div>
+                    <div class="sector-leader">{{ sector_data.leader.name }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
 
         <!-- AI 洞察 -->
         {% if ai_insights and ai_insights.enabled %}

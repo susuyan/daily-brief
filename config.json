@@ -15,11 +15,18 @@
       {"name": "恒生指数", "symbol": "^HSI", "market": "hk"},
       {"name": "中证500", "symbol": "000905.SS", "market": "cn"}
     ],
-    "funds": [
-      {"name": "沪深300ETF", "code": "510300"},
-      {"name": "中证500ETF", "code": "510500"},
-      {"name": "恒生科技ETF", "code": "513130"}
-    ]
+    "funds": {
+      "enabled": true,
+      "watchlist": [
+        {"name": "沪深300ETF", "code": "510300"},
+        {"name": "中证500ETF", "code": "510500"},
+        {"name": "恒生科技ETF", "code": "513130"}
+      ],
+      "show_hot_etfs": true,
+      "hot_etf_count": 3,
+      "show_sectors": true,
+      "show_flow": true
+    }
   },
   "news": {
     "sources": ["财联社", "华尔街见闻", "Bloomberg"],
