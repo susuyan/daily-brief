@@ -1,0 +1,194 @@
+name: Claude Assistant
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  issues:
+    types: [opened, assigned]
+  pull_request_review:
+    types: [submitted]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.issue.number || github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  claude:
+    runs-on: ubuntu-latest
+    if: |
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
+      (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+      actions: read
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install requests==2.31.0 urllib3==2.0.7
+
+      - name: Get CI status
+        id: ci-status
+        uses: actions/github-script@v7
+        with:
+          script: |
+            if (context.eventName === 'pull_request_review_comment' ||
+                context.eventName === 'pull_request_review') {
+              const { data: runs } = await github.rest.actions.listWorkflowRunsForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                event: 'pull_request',
+                per_page: 5
+              });
+
+              const relevantRun = runs.workflow_runs.find(run =>
+                run.head_sha === context.payload.pull_request?.head.sha
+              );
+
+              if (relevantRun) {
+                return `CI Status: ${relevantRun.status} (${relevantRun.conclusion || 'in progress'})`;
+              }
+            }
+            return 'CI Status: Not available';
+
+      - name: Extract user request
+        id: extract-request
+        env:
+          COMMENT_BODY: ${{ github.event.comment.body || github.event.issue.body || github.event.pull_request.body }}
+        run: |
+          # 移除 @claude 提及，提取实际请求
+          REQUEST=$(echo "$COMMENT_BODY" | sed -E 's/@claude|@Claude//gi' | xargs)
+          echo "request=$REQUEST" >> $GITHUB_OUTPUT
+
+      - name: Claude Assistant
+        id: claude
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_BASE_URL: ${{ secrets.ANTHROPIC_BASE_URL }}
+          USER_REQUEST: ${{ steps.extract-request.outputs.request }}
+          REPO: ${{ github.repository }}
+          EVENT_NAME: ${{ github.event_name }}
+          CI_STATUS: ${{ steps.ci-status.outputs.result }}
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import os
+          import requests
+          import json
+
+          api_key = os.getenv("ANTHROPIC_API_KEY")
+          base_url = os.getenv("ANTHROPIC_BASE_URL", "https://api.anthropic.com")
+          user_request = os.getenv("USER_REQUEST", "")
+          repo = os.getenv("REPO", "")
+          event_name = os.getenv("EVENT_NAME", "")
+          ci_status = os.getenv("CI_STATUS", "")
+
+          if not api_key:
+              print("::error::ANTHROPIC_API_KEY not set")
+              with open("/tmp/response.txt", "w") as f:
+                  f.write("❌ ANTHROPIC_API_KEY not configured")
+              exit(1)
+
+          system_prompt = "你是 daily-brief 项目的 AI 助手，精通 Python 自动化和数据处理。"
+          user_prompt = f"""用户请求：{user_request}
+
+当前上下文：
+- 仓库：{repo}
+- 事件类型：{event_name}
+- CI 状态：{ci_status}
+
+项目技术栈：
+- Python 3.11+
+- 自动化日报生成
+- 数据聚合与分析
+
+请提供有帮助、准确的回答。如果需要查看代码，请基于已检出的代码库。"""
+
+          # Call Anthropic API
+          url = f"{base_url.rstrip('/')}/v1/messages"
+          headers = {
+              "Content-Type": "application/json",
+              "X-API-Key": api_key,
+              "Anthropic-Version": "2023-06-01"
+          }
+          data = {
+              "model": "claude-sonnet-4-5-20250929",
+              "max_tokens": 4096,
+              "system": system_prompt,
+              "messages": [
+                  {"role": "user", "content": user_prompt}
+              ]
+          }
+
+          try:
+              response = requests.post(
+                  url,
+                  headers=headers,
+                  json=data,
+                  timeout=(30, 120),
+                  verify=True
+              )
+              response.raise_for_status()
+              result = response.json()
+              assistant_response = result["content"][0]["text"]
+          except requests.exceptions.Timeout:
+              assistant_response = "❌ API 调用超时，请稍后重试。"
+          except requests.exceptions.ConnectionError as e:
+              assistant_response = f"❌ 连接错误: {str(e)}"
+          except requests.exceptions.HTTPError as e:
+              assistant_response = f"❌ HTTP 错误: {e.response.status_code} - {e.response.text}"
+          except Exception as e:
+              assistant_response = f"❌ API 调用失败: {type(e).__name__}: {str(e)}"
+
+          # Save result
+          with open("/tmp/response.txt", "w") as f:
+              f.write(assistant_response)
+
+          print(assistant_response)
+          PYTHON_SCRIPT
+
+      - name: Post response
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let response;
+            try {
+              response = fs.readFileSync('/tmp/response.txt', 'utf8');
+            } catch (e) {
+              response = '❌ 无法读取响应内容';
+            }
+
+            if (!response || response.trim() === '') {
+              response = '❌ 响应为空';
+            }
+
+            // 确定评论位置
+            const issueNumber = context.payload.issue?.number || context.payload.pull_request?.number;
+
+            if (!issueNumber) {
+              console.log('No issue/PR number found, skipping comment');
+              return;
+            }
+
+            // 发布回复
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              body: `🤖 **Claude**\n\n${response}`
+            });
