@@ -213,6 +213,38 @@ class NewsFetcher:
         url = "https://www.wired.com/feed/rss"
         return self.fetch_from_rss(url, "Wired", max_items=3)
 
+    def fetch_ft(self) -> List[Dict]:
+        """获取 Financial Times 新闻"""
+        urls = [
+            "https://rsshub.app/ft/chinese",
+            "https://rsshub.rssforever.com/ft/chinese",
+        ]
+        for url in urls:
+            result = self.fetch_from_rss(url, "FT中文网", max_items=3)
+            if result:
+                return result
+        return []
+
+    def fetch_nyt(self) -> List[Dict]:
+        """获取 New York Times 新闻"""
+        url = "https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml"
+        return self.fetch_from_rss(url, "NYT", max_items=3)
+
+    def fetch_guardian(self) -> List[Dict]:
+        """获取 The Guardian 新闻"""
+        url = "https://www.theguardian.com/technology/rss"
+        return self.fetch_from_rss(url, "The Guardian", max_items=3)
+
+    def fetch_engadget(self) -> List[Dict]:
+        """获取 Engadget 科技新闻"""
+        url = "https://www.engadget.com/rss.xml"
+        return self.fetch_from_rss(url, "Engadget", max_items=3)
+
+    def fetch_verge_ai(self) -> List[Dict]:
+        """获取 The Verge AI 新闻"""
+        url = "https://www.theverge.com/ai-artificial-intelligence/rss/index.xml"
+        return self.fetch_from_rss(url, "The Verge AI", max_items=3)
+
     def get_all_news(self, max_items: int = 5) -> List[Dict]:
         """获取所有新闻源"""
         all_news = []
@@ -225,6 +257,7 @@ class NewsFetcher:
             ("36氪", self.fetch_36kr),
             ("Solidot", self.fetch_solidot),
             ("IT之家", self.fetch_ithome),
+            ("FT中文网", self.fetch_ft),
             # 国际新闻源
             ("Hacker News", self.fetch_hackernews),
             ("Reuters", self.fetch_reuters),
@@ -234,6 +267,10 @@ class NewsFetcher:
             ("Wired", self.fetch_wired),
             ("TechCrunch", self.fetch_techcrunch),
             ("The Verge", self.fetch_the_verge),
+            ("NYT", self.fetch_nyt),
+            ("The Guardian", self.fetch_guardian),
+            ("Engadget", self.fetch_engadget),
+            ("The Verge AI", self.fetch_verge_ai),
         ]
 
         for name, fetch_func in sources:
