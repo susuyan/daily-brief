@@ -84,7 +84,7 @@ jobs:
           EVENT_NAME: ${{ github.event_name }}
           CI_STATUS: ${{ steps.ci-status.outputs.result }}
         run: |
-          python3 << 'PYTHON_SCRIPT'
+          cat > /tmp/claude_script.py << 'SCRIPT_EOF'
           import os
           import requests
           import json
@@ -103,21 +103,8 @@ jobs:
               exit(1)
 
           system_prompt = "你是 daily-brief 项目的 AI 助手，精通 Python 自动化和数据处理。"
-          user_prompt = f"""用户请求：{user_request}
+          user_prompt = f"用户请求：{user_request}\n\n当前上下文：\n- 仓库：{repo}\n- 事件类型：{event_name}\n- CI 状态：{ci_status}\n\n项目技术栈：\n- Python 3.11+\n- 自动化日报生成\n- 数据聚合与分析\n\n请提供有帮助、准确的回答。如果需要查看代码，请基于已检出的代码库。"
 
-当前上下文：
-- 仓库：{repo}
-- 事件类型：{event_name}
-- CI 状态：{ci_status}
-
-项目技术栈：
-- Python 3.11+
-- 自动化日报生成
-- 数据聚合与分析
-
-请提供有帮助、准确的回答。如果需要查看代码，请基于已检出的代码库。"""
-
-          # Call Anthropic API
           url = f"{base_url.rstrip('/')}/v1/messages"
           headers = {
               "Content-Type": "application/json",
@@ -153,12 +140,13 @@ jobs:
           except Exception as e:
               assistant_response = f"❌ API 调用失败: {type(e).__name__}: {str(e)}"
 
-          # Save result
           with open("/tmp/response.txt", "w") as f:
               f.write(assistant_response)
 
           print(assistant_response)
-          PYTHON_SCRIPT
+          SCRIPT_EOF
+
+          python3 /tmp/claude_script.py
 
       - name: Post response
         if: always()
@@ -177,7 +165,6 @@ jobs:
               response = '❌ 响应为空';
             }
 
-            // 确定评论位置
             const issueNumber = context.payload.issue?.number || context.payload.pull_request?.number;
 
             if (!issueNumber) {
@@ -185,7 +172,6 @@ jobs:
               return;
             }
 
-            // 发布回复
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
