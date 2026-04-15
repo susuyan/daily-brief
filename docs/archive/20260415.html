@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>每日早报 - 2026年04月15日</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            padding: 30px 0;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-title .icon {
+            font-size: 22px;
+        }
+
+        /* 天气样式 */
+        .weather-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .weather-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 15px;
+            color: white;
+        }
+
+        .weather-city {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .weather-main {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .weather-icon {
+            font-size: 32px;
+        }
+
+        .weather-temp {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .weather-desc {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .weather-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .weather-detail {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* 表格样式 */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .data-table th {
+            background: #f8f9fa;
+            padding: 12px 8px;
+            text-align: left;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .data-table td {
+            padding: 12px 8px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .number {
+            font-family: "SF Mono", Monaco, monospace;
+            font-weight: 600;
+        }
+
+        .up {
+            color: #e74c3c;
+        }
+
+        .down {
+            color: #27ae60;
+        }
+
+        .neutral {
+            color: #95a5a6;
+        }
+
+        /* 新闻样式 */
+        .news-list {
+            list-style: none;
+        }
+
+        .news-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            gap: 12px;
+        }
+
+        .news-item:last-child {
+            border-bottom: none;
+        }
+
+        .news-time {
+            font-size: 12px;
+            color: #999;
+            white-space: nowrap;
+            min-width: 50px;
+        }
+
+        .news-content {
+            flex: 1;
+        }
+
+        .news-title {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .news-source {
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        /* 备注 */
+        .footer-note {
+            text-align: center;
+            color: rgba(255,255,255,0.7);
+            font-size: 12px;
+            padding: 20px 0;
+        }
+
+        /* AI 洞察样式 */
+        .ai-insight {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .ai-insight .card-title {
+            color: white;
+        }
+
+        .insight-highlight {
+            background: rgba(255,255,255,0.15);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .insight-section {
+            margin-bottom: 10px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .insight-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .insight-label {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-right: 8px;
+            font-weight: 500;
+        }
+
+        .insight-text {
+            opacity: 0.95;
+        }
+
+        /* AI 新闻摘要 */
+        .news-ai-summary {
+            font-size: 12px;
+            color: #667eea;
+            margin-top: 4px;
+            padding: 4px 8px;
+            background: #f0f3ff;
+            border-radius: 4px;
+            line-height: 1.4;
+        }
+
+        /* 板块网格 */
+        .sector-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+        }
+
+        .sector-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            border-left: 3px solid #ddd;
+        }
+
+        .sector-item.up {
+            background: #fff5f5;
+            border-left-color: #e74c3c;
+        }
+
+        .sector-item.down {
+            background: #f0fff4;
+            border-left-color: #27ae60;
+        }
+
+        .sector-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .sector-change {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .sector-item.up .sector-change {
+            color: #e74c3c;
+        }
+
+        .sector-item.down .sector-change {
+            color: #27ae60;
+        }
+
+        .sector-leader {
+            font-size: 11px;
+            color: #999;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* 响应式 */
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .card {
+                padding: 15px;
+            }
+
+            .weather-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .data-table {
+                font-size: 12px;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 10px 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 每日早报</h1>
+            <div class="date">2026年04月15日 星期三</div>
+        </div>
+
+        <!-- 天气模块 -->
+        <div class="card">
+            <div class="card-title">
+                <span class="icon">🌤️</span>
+                <span>重点城市天气</span>
+            </div>
+            <div class="weather-grid">
+                
+                
+                <div class="weather-item">
+                    <div class="weather-city">武汉</div>
+                    <div class="weather-main">
+                        <span class="weather-icon">☁️</span>
+                        <span class="weather-temp">18°</span>
+                    </div>
+                    <div class="weather-desc">阴 | 14°~22°</div>
+                    <div class="weather-details">
+                        <div class="weather-detail">💧 湿度 80%</div>
+                        <div class="weather-detail">⚪ 空气 暂无数据</div>
+                        <div class="weather-detail">☀️ 紫外线 强</div>
+                        <div class="weather-detail">🌬️ 东北风2级</div>
+                    </div>
+                </div>
+                
+                
+                
+                <div class="weather-item">
+                    <div class="weather-city">东莞</div>
+                    <div class="weather-main">
+                        <span class="weather-icon">⛅</span>
+                        <span class="weather-temp">27°</span>
+                    </div>
+                    <div class="weather-desc">多云 | 25°~29°</div>
+                    <div class="weather-details">
+                        <div class="weather-detail">💧 湿度 77%</div>
+                        <div class="weather-detail">⚪ 空气 暂无数据</div>
+                        <div class="weather-detail">☀️ 紫外线 很强</div>
+                        <div class="weather-detail">🌬️ 南风2级</div>
+                    </div>
+                </div>
+                
+                
+                
+                <div class="weather-item">
+                    <div class="weather-city">光山</div>
+                    <div class="weather-main">
+                        <span class="weather-icon">🌫️</span>
+                        <span class="weather-temp">19°</span>
+                    </div>
+                    <div class="weather-desc">雾 | 15°~22°</div>
+                    <div class="weather-details">
+                        <div class="weather-detail">💧 湿度 81%</div>
+                        <div class="weather-detail">⚪ 空气 暂无数据</div>
+                        <div class="weather-detail">☀️ 紫外线 弱</div>
+                        <div class="weather-detail">🌬️ 东风3级</div>
+                    </div>
+                </div>
+                
+                
+            </div>
+        </div>
+
+        <!-- 美股 -->
+        <div class="card">
+            <div class="card-title">
+                <span class="icon">🇺🇸</span>
+                <span>美股市场（前一交易日）</span>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>指数</th>
+                        <th style="text-align:right">最新价</th>
+                        <th style="text-align:right">涨跌</th>
+                        <th style="text-align:right">涨跌幅</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    
+                    <tr>
+                        <td>道琼斯</td>
+                        <td class="number" style="text-align:right">48535.99</td>
+                        <td class="number up" style="text-align:right">
+                            +317.74
+                        </td>
+                        <td class="number up" style="text-align:right">
+                            +0.66%
+                        </td>
+                    </tr>
+                    
+                    
+                    
+                    <tr>
+                        <td>纳斯达克</td>
+                        <td class="number" style="text-align:right">23639.08</td>
+                        <td class="number up" style="text-align:right">
+                            +455.34
+                        </td>
+                        <td class="number up" style="text-align:right">
+                            +1.96%
+                        </td>
+                    </tr>
+                    
+                    
+                    
+                    <tr>
+                        <td>标普500</td>
+                        <td class="number" style="text-align:right">6967.38</td>
+                        <td class="number up" style="text-align:right">
+                            +81.14
+                        </td>
+                        <td class="number up" style="text-align:right">
+                            +1.18%
+                        </td>
+                    </tr>
+                    
+                    
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 亚太市场 -->
+        <div class="card">
+            <div class="card-title">
+                <span class="icon">🌏</span>
+                <span>亚太市场</span>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>指数</th>
+                        <th style="text-align:right">最新价</th>
+                        <th style="text-align:right">涨跌</th>
+                        <th style="text-align:right">涨跌幅</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    
+                    <tr>
+                        <td>恒生指数</td>
+                        <td class="number" style="text-align:right">25872.32</td>
+                        <td class="number up" style="text-align:right">
+                            +211.47
+                        </td>
+                        <td class="number up" style="text-align:right">
+                            +0.82%
+                        </td>
+                    </tr>
+                    
+                    
+                    
+                    <tr>
+                        <td>日经225</td>
+                        <td class="number" style="text-align:right">58468.45</td>
+                        <td class="number up" style="text-align:right">
+                            +591.06
+                        </td>
+                        <td class="number up" style="text-align:right">
+                            +1.02%
+                        </td>
+                    </tr>
+                    
+                    
+                    
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 热门ETF -->
+        
+        <div class="card">
+            <div class="card-title">
+                <span class="icon">📈</span>
+                <span>热门 ETF</span>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>名称</th>
+                        <th style="text-align:right">价格</th>
+                        <th style="text-align:right">涨跌</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    
+                    <tr>
+                        <td>标普500 ETF<br><small style="color:#999">SPY</small></td>
+                        <td class="number" style="text-align:right">$694.46</td>
+                        <td class="number up" style="text-align:right">
+                            +1.22%
+                        </td>
+                    </tr>
+                    
+                    
+                    
+                    <tr>
+                        <td>纳斯达克100 ETF<br><small style="color:#999">QQQ</small></td>
+                        <td class="number" style="text-align:right">$628.60</td>
+                        <td class="number up" style="text-align:right">
+                            +1.82%
+                        </td>
+                    </tr>
+                    
+                    
+                    
+                    <tr>
+                        <td>中概互联 ETF<br><small style="color:#999">KWEB</small></td>
+                        <td class="number" style="text-align:right">$29.37</td>
+                        <td class="number up" style="text-align:right">
+                            +2.26%
+                        </td>
+                    </tr>
+                    
+                    
+                </tbody>
+            </table>
+        </div>
+        
+
+        <!-- AI 洞察 -->
+        
+        <div class="card ai-insight">
+            <div class="card-title">
+                <span class="icon">🤖</span>
+                <span>AI 洞察</span>
+            </div>
+            
+            
+            
+        </div>
+        
+
+        <!-- 热点资讯 -->
+        <div class="card">
+            <div class="card-title">
+                <span class="icon">🔥</span>
+                <span>全球热点</span>
+            </div>
+            <ul class="news-list">
+                
+                <li class="news-item">
+                    <span class="news-time">04-14 02:25</span>
+                    <div class="news-content">
+                        <div class="news-title">
+                            <a href="https://www.blackmagicdesign.com/products/davinciresolve/photo" target="_blank" rel="noopener" style="color: #333; text-decoration: none;">DaVinci Resolve – Photo</a>
+                            
+                        </div>
+                        
+                        
+                        <div class="news-source">HN 🔥 1053 | 💬 263</div>
+                    </div>
+                </li>
+                
+                <li class="news-item">
+                    <span class="news-time">04-14 08:30</span>
+                    <div class="news-content">
+                        <div class="news-title">
+                            <a href="https://rareese.com/posts/backblaze/" target="_blank" rel="noopener" style="color: #333; text-decoration: none;">Backblaze has stopped backing up OneDrive and Dropbox folders and maybe others</a>
+                            
+                        </div>
+                        
+                        
+                        <div class="news-source">HN 🔥 960 | 💬 589</div>
+                    </div>
+                </li>
+                
+                <li class="news-item">
+                    <span class="news-time">04-14 03:06</span>
+                    <div class="news-content">
+                        <div class="news-title">
+                            <a href="https://developers.google.com/search/blog/2026/04/back-button-hijacking" target="_blank" rel="noopener" style="color: #333; text-decoration: none;">A new spam policy for “back button hijacking”</a>
+                            
+                        </div>
+                        
+                        
+                        <div class="news-source">HN 🔥 831 | 💬 475</div>
+                    </div>
+                </li>
+                
+                <li class="news-item">
+                    <span class="news-time">04-14 13:46</span>
+                    <div class="news-content">
+                        <div class="news-title">
+                            <a href="https://techcrunch.com/2026/04/13/thousands-of-rare-concert-recordings-are-landing-on-the-internet-archive-listen-now/" target="_blank" rel="noopener" style="color: #333; text-decoration: none;">Rare concert recordings are landing on the Internet Archive</a>
+                            
+                        </div>
+                        
+                        
+                        <div class="news-source">HN 🔥 519 | 💬 155</div>
+                    </div>
+                </li>
+                
+                <li class="news-item">
+                    <span class="news-time">04-14 10:33</span>
+                    <div class="news-content">
+                        <div class="news-title">
+                            <a href="https://steveklabnik.github.io/jujutsu-tutorial/introduction/what-is-jj-and-why-should-i-care.html" target="_blank" rel="noopener" style="color: #333; text-decoration: none;">jj – the CLI for Jujutsu</a>
+                            
+                        </div>
+                        
+                        
+                        <div class="news-source">HN 🔥 490 | 💬 433</div>
+                    </div>
+                </li>
+                
+                <li class="news-item">
+                    <span class="news-time">04-15</span>
+                    <div class="news-content">
+                        <div class="news-title">
+                            <a href="https://api3.cls.cn/share/article/2344354?os=web&sv=8.4.6&app=CailianpressWeb" target="_blank" rel="noopener" style="color: #333; text-decoration: none;">财联社4月15日电，韩国央行行长提名人申铉松称，韩国面临滞胀的风险较低。</a>
+                            
+                        </div>
+                        
+                        
+                        <div class="news-source">财联社</div>
+                    </div>
+                </li>
+                
+                <li class="news-item">
+                    <span class="news-time">04-15</span>
+                    <div class="news-content">
+                        <div class="news-title">
+                            <a href="https://api3.cls.cn/share/article/2344352?os=web&sv=8.4.6&app=CailianpressWeb" target="_blank" rel="noopener" style="color: #333; text-decoration: none;">商业航天概念反复活跃 广联航空涨超10%</a>
+                            
+                        </div>
+                        
+                        
+                        <div class="news-source">财联社</div>
+                    </div>
+                </li>
+                
+                <li class="news-item">
+                    <span class="news-time">04-15</span>
+                    <div class="news-content">
+                        <div class="news-title">
+                            <a href="https://api3.cls.cn/share/article/2344351?os=web&sv=8.4.6&app=CailianpressWeb" target="_blank" rel="noopener" style="color: #333; text-decoration: none;">习近平会见俄罗斯外长拉夫罗夫</a>
+                            
+                        </div>
+                        
+                        
+                        <div class="news-source">财联社</div>
+                    </div>
+                </li>
+                
+                <li class="news-item">
+                    <span class="news-time">04-15</span>
+                    <div class="news-content">
+                        <div class="news-title">
+                            <a href="https://wallstreetcn.com/livenews/3088088" target="_blank" rel="noopener" style="color: #333; text-decoration: none;">Snap公司为追求盈利，计划裁员16%。 Snap公司将裁减约1000名全职员工。</a>
+                            
+                        </div>
+                        
+                        
+                        <div class="news-source">华尔街见闻</div>
+                    </div>
+                </li>
+                
+                <li class="news-item">
+                    <span class="news-time">04-15</span>
+                    <div class="news-content">
+                        <div class="news-title">
+                            <a href="https://wallstreetcn.com/livenews/3088087" target="_blank" rel="noopener" style="color: #333; text-decoration: none;">韩国央行行长提名人申铉松：韩元过度走弱并不可取。 韩国面临滞胀的风险较低。 价格稳定是经济稳定增长的必要条件。</a>
+                            
+                        </div>
+                        
+                        
+                        <div class="news-source">华尔街见闻</div>
+                    </div>
+                </li>
+                
+            </ul>
+        </div>
+
+        <div class="footer-note">
+            <p>数据更新时间：2026-04-15 01:39:48</p>
+            <p style="margin-top:5px">仅供参考，不构成投资建议</p>
+        </div>
+    </div>
+</body>
+</html>
